@@ -1,0 +1,58 @@
+#include <stdio.h>
+
+#define MAX_PROCESS 10
+
+struct Process {
+    int processID;
+    int arrivalTime;
+    int burstTime;
+    int remainingTime;
+};
+
+void roundRobinScheduling(struct Process processes[], int n, int quantum) {
+    int time = 0;
+    int remainingProcesses = n;
+
+    while (remainingProcesses > 0) {
+        for (int i = 0; i < n; i++) {
+            if (processes[i].arrivalTime <= time && processes[i].remainingTime > 0) {
+                int executeTime = (processes[i].remainingTime < quantum) ? processes[i].remainingTime : quantum;
+                processes[i].remainingTime -= executeTime;
+
+                printf("Executing Process %d for %d units. Remaining time: %d\n", processes[i].processID, executeTime, processes[i].remainingTime);
+
+                if (processes[i].remainingTime == 0) {
+                    remainingProcesses--;
+                    printf("Process %d completed.\n", processes[i].processID);
+                }
+            }
+        }
+        
+        time += quantum;  // Move the time increment outside the inner loop
+    }
+}
+
+int main() {
+    int n, quantum;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Process processes[MAX_PROCESS];
+
+    for (int i = 0; i < n; i++) {
+        processes[i].processID = i + 1;
+        printf("Enter arrival time for Process %d: ", i + 1);
+        scanf("%d", &processes[i].arrivalTime);
+        printf("Enter burst time for Process %d: ", i + 1);
+        scanf("%d", &processes[i].burstTime);
+        processes[i].remainingTime = processes[i].burstTime;
+    }
+
+    printf("Enter the time quantum for Round Robin scheduling: ");
+    scanf("%d", &quantum);
+
+    roundRobinScheduling(processes, n, quantum);
+
+    return 0;
+}
