@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
+
+#define SHARED_MEMORY_SIZE 1024
+
+int main() {
+    int shmid;
+    key_t key;
+    char *shared_memory;
+    pid_t pid;
+
+    // Generate a unique key
+    key = ftok("/tmp", 'A');
+    if (key == -1) {
+        perror("ftok");
+        exit(EXIT_FAILURE);
+    }
+
+    // Create shared memory segment
+    shmid = shmget(key, SHARED_MEMORY_SIZE, IPC_CREAT | 0666);
+    if (shmid == -1) {
+        perror("shmget");
+        exit(EXIT_FAILURE);
+    }
+
+    // Attach to the shared memory segment
+    shared_memory = shmat(shmid, NULL, 0);
+    if (shared_memory == (char *) -1) {
+        perror("shmat");
+        exit(EXIT_FAILURE);
+    }
+
+    pid = fork();
+
+    if (pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid == 0) { // Child process
+        printf("Child process writing to shared memory\n");
+        sprintf(shared_memory, "Hello from the child process!");
+        exit(EXIT_SUCCESS);
+    } else { // Parent process
+        // Wait for child process to finish
+        wait(NULL);
+        printf("Parent process reading from shared memory: %s\n", shared_memory);
+    }
+
+    // Detach from shared memory
+    if (shmdt(shared_memory) == -1) {
+        perror("shmdt");
+        exit(EXIT_FAILURE);
+    }
+
+    // Delete the shared memory segment
+    if (shmctl(shmid, IPC_RMID, NULL) == -1) {
+        perror("shmctl");
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
