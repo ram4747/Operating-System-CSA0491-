@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DIRECTORIES 10
+#define MAX_FILES_PER_DIR 100
+#define MAX_FILENAME_LENGTH 50
+
+struct File {
+    char name[MAX_FILENAME_LENGTH];
+    int size;
+};
+
+struct Directory {
+    char name[MAX_FILENAME_LENGTH];
+    struct File files[MAX_FILES_PER_DIR];
+    int num_files;
+};
+
+struct TwoLevelFileSystem {
+    struct Directory directories[MAX_DIRECTORIES];
+    int num_directories;
+};
+
+void initialize_filesystem(struct TwoLevelFileSystem *fs) {
+    fs->num_directories = 0;
+}
+
+void create_directory(struct TwoLevelFileSystem *fs, const char *dirname) {
+    if (fs->num_directories < MAX_DIRECTORIES) {
+        strcpy(fs->directories[fs->num_directories].name, dirname);
+        fs->directories[fs->num_directories].num_files = 0;
+        fs->num_directories++;
+        printf("Directory '%s' created\n", dirname);
+    } else {
+        printf("Cannot create directory. Maximum directories reached.\n");
+    }
+}
+
+void add_file(struct TwoLevelFileSystem *fs, const char *dirname, const char *filename, int size) {
+    int dir_index = -1;
+    // Find directory index by name
+    for (int i = 0; i < fs->num_directories; i++) {
+        if (strcmp(fs->directories[i].name, dirname) == 0) {
+            dir_index = i;
+            break;
+        }
+    }
+    if (dir_index == -1) {
+        printf("Directory '%s' not found\n", dirname);
+        return;
+    }
+    // Check if the directory has space for the file
+    if (fs->directories[dir_index].num_files < MAX_FILES_PER_DIR) {
+        strcpy(fs->directories[dir_index].files[fs->directories[dir_index].num_files].name, filename);
+        fs->directories[dir_index].files[fs->directories[dir_index].num_files].size = size;
+        fs->directories[dir_index].num_files++;
+        printf("File '%s' added to directory '%s'\n", filename, dirname);
+    } else {
+        printf("Cannot add file to directory '%s'. Maximum files reached.\n", dirname);
+    }
+}
+
+void list_files(struct TwoLevelFileSystem *fs, const char *dirname) {
+    int dir_index = -1;
+    // Find directory index by name
+    for (int i = 0; i < fs->num_directories; i++) {
+        if (strcmp(fs->directories[i].name, dirname) == 0) {
+            dir_index = i;
+            break;
+        }
+    }
+    if (dir_index == -1) {
+        printf("Directory '%s' not found\n", dirname);
+        return;
+    }
+    printf("Files in directory '%s':\n", dirname);
+    for (int i = 0; i < fs->directories[dir_index].num_files; i++) {
+        printf("%s - %d bytes\n", fs->directories[dir_index].files[i].name, fs->directories[dir_index].files[i].size);
+    }
+}
+
+int main() {
+    struct TwoLevelFileSystem filesystem;
+    initialize_filesystem(&filesystem);
+
+    create_directory(&filesystem, "docs");
+    create_directory(&filesystem, "images");
+
+    add_file(&filesystem, "docs", "doc1.txt", 100);
+    add_file(&filesystem, "docs", "doc2.txt", 150);
+    add_file(&filesystem, "images", "image1.jpg", 200);
+
+    list_files(&filesystem, "docs");
+    list_files(&filesystem, "images");
+
+    return 0;
+}
