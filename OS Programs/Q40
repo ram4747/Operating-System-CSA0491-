@@ -1,0 +1,37 @@
+In Linux, file access permissions are set using three types of users: owner, group, and others. Each user can be assigned one or more of the following permissions for a file:
+
+Read (r): Allows the user to view the contents of the file.
+Write (w): Allows the user to modify the contents of the file.
+Execute (x): Allows the user to execute the file if it is a script or program.
+These permissions can be set separately for each of the three types of users (owner, group, and others) and are represented as a sequence of characters in the file's permission string.
+
+Here's an illustration of the different file access permissions and user types in Linux:
+
+Owner: The user who owns the file. This user can be changed using the chown command. By default, the user who creates the file becomes its owner.
+
+Group: A group of users who share access to the file. Each file is associated with a primary group, and additional groups can be assigned using the chgrp command.
+
+Others: All users who are not the owner or part of the group.
+
+The permission string for a file in Linux typically appears as follows:
+
+
+-rwxrwxrwx
+
+
+
+Each character in the permission string represents a specific permission or attribute:
+
+The first character indicates the file type (- for a regular file, d for a directory, l for a symbolic link, etc.).
+The next three characters represent the owner's permissions.
+The following three characters represent the group's permissions.
+The last three characters represent the permissions for others.
+For example:
+
+-rw-r--r-- indicates a regular file with read and write permissions for the owner, and read-only permissions for the group and others.
+drwxr-xr-x indicates a directory with read, write, and execute permissions for the owner, and read and execute permissions for the group and others.
+To modify file permissions in Linux, you can use the chmod command. To change the ownership of a file or directory, you can use the chown command, and to change the group ownership, you can use the chgrp command.
+
+
+
+
