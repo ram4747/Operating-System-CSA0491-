@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+#define MAX_BLOCKS 100
+
+// Function to simulate reading a block of the file
+void readBlock(char *file[], int blockNumber) {
+    // Check if the block number is valid
+    if (file[blockNumber] == NULL) {
+        printf("Block number %d does not exist.\n", blockNumber);
+        return;
+    }
+
+    // Read and print the block content
+    printf("Block number %d: %s\n", blockNumber, file[blockNumber]);
+}
+
+int main() {
+    // Simulate the file content using an array of strings
+    char *file[MAX_BLOCKS] = {
+        "This is block 0 content.",
+        "This is block 1 content.",
+        "This is block 2 content.",
+        "This is block 3 content.",
+        // Add more blocks as needed...
+    };
+
+    // Simulate the index block as an array of pointers to file blocks
+    int indexBlock[MAX_BLOCKS] = {0, 1, 2, 3}; // Each entry points to the corresponding block
+
+    // Read and print blocks from the file
+    int blockNumber;
+    printf("Enter the block number to read (0-based indexing, -1 to exit): ");
+    while (scanf("%d", &blockNumber) == 1 && blockNumber != -1) {
+        readBlock(file, indexBlock[blockNumber]);
+        printf("Enter the block number to read (0-based indexing, -1 to exit): ");
+    }
+
+    return 0;
+}
