@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct DiskBlock {
+    char data[512]; 
+    struct DiskBlock *next;
+} DiskBlock;
+
+
+void readBlock(DiskBlock *block) {
+    // Check if the block pointer is valid
+    if (block == NULL) {
+        printf("Block does not exist.\n");
+        return;
+    }
+
+   
+    printf("Block data: %s\n", block->data);
+}
+
+int main() {
+   
+    DiskBlock diskBlocks[100];
+
+  
+    DiskBlock *firstBlock = &diskBlocks[0]; 
+    DiskBlock *lastBlock = &diskBlocks[2];
+
+   
+        sprintf(diskBlocks[i].data, "This is block %d content.", i);
+        diskBlocks[i].next = (i < 2) ? &diskBlocks[i + 1] : NULL;
+    }
+
+ 
+    DiskBlock *currentBlock = firstBlock;
+    while (currentBlock != NULL) {
+        readBlock(currentBlock);
+        currentBlock = currentBlock->next;
+    }
+
+    return 0;
+}
