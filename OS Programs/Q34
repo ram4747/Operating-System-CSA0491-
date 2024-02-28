@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+// Function to simulate reading a record from the file
+void readRecord(FILE *file, int recordNumber) {
+    // Move the file pointer to the beginning of the file
+    fseek(file, 0, SEEK_SET);
+    
+    // Read records until the desired record number is reached
+    for (int i = 0; i < recordNumber; i++) {
+        char record[100];
+        if (fgets(record, sizeof(record), file) == NULL) {
+            printf("Record number %d does not exist.\n", recordNumber);
+            return;
+        }
+    }
+
+    // Read and print the desired record
+    char record[100];
+    if (fgets(record, sizeof(record), file) != NULL) {
+        printf("Record number %d: %s", recordNumber, record);
+    } else {
+        printf("Record number %d does not exist.\n", recordNumber);
+    }
+}
+
+int main() {
+    // Open the file for reading
+    FILE *file = fopen("records.txt", "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return 1;
+    }
+
+    // Read and print records from the file
+    int recordNumber;
+    printf("Enter the record number to read (1-based indexing, 0 to exit): ");
+    while (scanf("%d", &recordNumber) == 1 && recordNumber != 0) {
+        readRecord(file, recordNumber);
+        printf("Enter the record number to read (1-based indexing, 0 to exit): ");
+    }
+
+    // Close the file
+    fclose(file);
+    return 0;
+}
